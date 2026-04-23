@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, ImageBackground } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { useState } from "react";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import { weatherData } from "../data/weatherData";
 
 export default function HomeScreen() {
@@ -7,80 +8,109 @@ export default function HomeScreen() {
   const weather = weatherData[index];
 
   return (
-    <ImageBackground
-      source={{
-        uri: "https://images.unsplash.com/photo-1501630834273-4b5604d2ee31",
-      }}
-      style={styles.background}
-      resizeMode="cover"
-      testID="screen-weather"
-    >
-      <View style={styles.container}>
-        {/* CARD */}
-        <View style={styles.card}>
-          {/* DÍA */}
-          <Text style={styles.day} testID="navigation-current-day">
-            {weather.day}
-          </Text>
+    <View style={styles.background} testID="screen-weather">
+      {/* CARD */}
+      <View style={styles.card}>
+        {/* DIA */}
+        <Text style={styles.day} testID="navigation-current-day">
+          {weather.day}
+        </Text>
 
-          {/* CIUDAD */}
-          <Text style={styles.city} testID="header-city">
-            {weather.city.toUpperCase()}
-          </Text>
+        {/* CIUDAD */}
+        <Text style={styles.city} testID="header-city">
+          {weather.city.toUpperCase()}
+        </Text>
 
-          {/* ICONO */}
-          <Text
-            style={styles.icon}
-            testID={`icon-weather-${weather.condition.toLowerCase()}`}
-          >
-            {weather.condition === "Soleado" ? "○" : "☁️"}
-          </Text>
+        {/* ICONO */}
+        <View
+          style={styles.iconContainer}
+          testID={`icon-weather-${weather.condition.toLowerCase()}`}
+        >
+          {weather.condition === "Soleado" && (
+            <Feather name="circle" size={90} color="black" />
+          )}
+          {weather.condition === "Lluvia" && (
+            <MaterialCommunityIcons
+              name="weather-rainy"
+              size={90}
+              color="black"
+            />
+          )}
+          {weather.condition === "Nublado" && (
+            <MaterialCommunityIcons
+              name="weather-cloudy"
+              size={90}
+              color="black"
+            />
+          )}
+        </View>
 
-          {/* MÉTRICAS */}
-          <View style={styles.metrics}>
-            <View style={styles.metricItem} testID="metric-item">
-              <Text>💧 {weather.humidity}%</Text>
-            </View>
-            <View style={styles.metricItem} testID="metric-item">
-              <Text>📈 {weather.pressure} hPa</Text>
-            </View>
-            <View style={styles.metricItem} testID="metric-item">
-              <Text>🌬️ {weather.wind} km/h</Text>
-            </View>
+        {/* METRICAS */}
+        <View style={styles.metrics}>
+          <View style={styles.metricItem} testID="metric-item">
+            <Text>💧 {weather.humidity}%</Text>
           </View>
-
-          {/* TEMPERATURA */}
-          <Text style={styles.temp} testID="temp-current">
-            {weather.temp}°
-          </Text>
-
-          {/* MIN MAX */}
-          <View style={styles.minmax}>
-            <Text testID="temp-min">{weather.min}°</Text>
-            <Text testID="temp-max">{weather.max}°</Text>
+          <View style={styles.metricItem} testID="metric-item">
+            <Text>📈 {weather.pressure} hPa</Text>
+          </View>
+          <View style={styles.metricItem} testID="metric-item">
+            <Text>🌬️ {weather.wind} km/h</Text>
           </View>
         </View>
+
+        {/* TEMP */}
+        <Text style={styles.temp} testID="temp-current">
+          {weather.temp}°
+        </Text>
+
+        {/* MIN MAX */}
+        <View style={styles.minmax}>
+          <Text testID="temp-min">{weather.min}°</Text>
+          <Text testID="temp-max">{weather.max}°</Text>
+        </View>
       </View>
-    </ImageBackground>
+
+      {/* NAVEGACIÓN */}
+      <View style={styles.navigation}>
+        <Text
+          style={styles.button}
+          testID="button-prev-day"
+          onPress={() => {
+            if (index > 0) setIndex(index - 1);
+          }}
+        >
+          ←
+        </Text>
+
+        <Text
+          style={styles.button}
+          testID="button-next-day"
+          onPress={() => {
+            if (index < weatherData.length - 1) setIndex(index + 1);
+          }}
+        >
+          →
+        </Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-  },
-
-  container: {
-    flex: 1,
+    backgroundColor: "#e6eef2",
     justifyContent: "center",
     alignItems: "center",
   },
 
   card: {
     backgroundColor: "white",
-    width: 300,
-    borderRadius: 25,
-    padding: 25,
+    width: 260,
+    height: 500,
+    borderRadius: 20,
+    padding: 20,
+    justifyContent: "space-between",
 
     shadowColor: "#000",
     shadowOpacity: 0.2,
@@ -91,40 +121,49 @@ const styles = StyleSheet.create({
   day: {
     textAlign: "center",
     color: "gray",
-    marginBottom: 5,
   },
 
   city: {
     textAlign: "center",
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 20,
+    fontSize: 18,
+    fontWeight: "600",
+    letterSpacing: 1,
   },
 
-  icon: {
-    fontSize: 80,
-    textAlign: "center",
+  iconContainer: {
+    alignItems: "center",
     marginBottom: 20,
   },
 
   metrics: {
-    marginBottom: 20,
+    alignItems: "flex-start",
   },
 
   metricItem: {
-    flexDirection: "row",
     marginBottom: 5,
   },
 
   temp: {
-    fontSize: 50,
+    fontSize: 60,
     fontWeight: "bold",
     textAlign: "center",
-    marginBottom: 10,
   },
 
   minmax: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+
+  navigation: {
+    flexDirection: "row",
+    marginTop: 30,
+    gap: 40,
+  },
+
+  button: {
+    fontSize: 30,
+    backgroundColor: "rgba(255,255,255,0.4)",
+    padding: 15,
+    borderRadius: 10,
   },
 });
