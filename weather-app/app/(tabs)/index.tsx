@@ -1,72 +1,73 @@
 import { View, Text, StyleSheet } from "react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
-import { weatherData } from "../data/weatherData";
 
 export default function HomeScreen() {
+  const [weather, setWeather] = useState<any>(null);
   const [index, setIndex] = useState(0);
-  const weather = weatherData[index];
+
+  useEffect(() => {
+    fetch(
+      "https://api.open-meteo.com/v1/forecast?latitude=-34.61&longitude=-58.38&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto",
+    )
+      .then((res) => res.json())
+      .then((data) => setWeather(data))
+      .catch(() => console.log("Error cargando clima"));
+  }, []);
+
+  if (!weather) {
+    return (
+      <View style={styles.background}>
+        <Text>Cargando clima...</Text>
+      </View>
+    );
+  }
+
+  // 🌡️ DATOS REALES
+  const currentTemp = Math.round(weather.current_weather.temperature);
+  const min = Math.round(weather.daily.temperature_2m_min[index]);
+  const max = Math.round(weather.daily.temperature_2m_max[index]);
 
   return (
     <View style={styles.background} testID="screen-weather">
-      {/* CARD */}
       <View style={styles.card}>
         {/* DIA */}
         <Text style={styles.day} testID="navigation-current-day">
-          {weather.day}
+          {index === 0 ? "HOY" : `DÍA ${index + 1}`}
         </Text>
 
         {/* CIUDAD */}
         <Text style={styles.city} testID="header-city">
-          {weather.city.toUpperCase()}
+          BUENOS AIRES
         </Text>
 
-        {/* ICONO */}
-        <View
-          style={styles.iconContainer}
-          testID={`icon-weather-${weather.condition.toLowerCase()}`}
-        >
-          {weather.condition === "Soleado" && (
-            <Feather name="circle" size={90} color="black" />
-          )}
-          {weather.condition === "Lluvia" && (
-            <MaterialCommunityIcons
-              name="weather-rainy"
-              size={90}
-              color="black"
-            />
-          )}
-          {weather.condition === "Nublado" && (
-            <MaterialCommunityIcons
-              name="weather-cloudy"
-              size={90}
-              color="black"
-            />
-          )}
+        {/* ICONO (simple por ahora) */}
+        <View testID="icon-weather-sunny" style={styles.iconContainer}>
+          <Feather name="circle" size={90} color="black" />
         </View>
 
-        {/* METRICAS */}
+        {/* MÉTRICAS (mock, API no las trae fácil) */}
         <View style={styles.metrics}>
           <View style={styles.metricItem} testID="metric-item">
-            <Text>💧 {weather.humidity}%</Text>
+            <Text>💧 --%</Text>
           </View>
           <View style={styles.metricItem} testID="metric-item">
-            <Text>📈 {weather.pressure} hPa</Text>
+            <Text>📈 -- hPa</Text>
           </View>
           <View style={styles.metricItem} testID="metric-item">
-            <Text>🌬️ {weather.wind} km/h</Text>
+            <Text>🌬️ -- km/h</Text>
           </View>
         </View>
 
-        {/* TEMP */}
+        {/* TEMP ACTUAL REAL */}
         <Text style={styles.temp} testID="temp-current">
-          {weather.temp}°
+          {currentTemp}°
         </Text>
 
-        {/* MIN MAX */}
+        {/* MIN / MAX */}
         <View style={styles.minmax}>
-          <Text testID="temp-min">{weather.min}°</Text>
-          <Text testID="temp-max">{weather.max}°</Text>
+          <Text testID="temp-min">{min}°</Text>
+          <Text testID="temp-max">{max}°</Text>
         </View>
       </View>
 
@@ -75,9 +76,7 @@ export default function HomeScreen() {
         <Text
           style={styles.button}
           testID="button-prev-day"
-          onPress={() => {
-            if (index > 0) setIndex(index - 1);
-          }}
+          onPress={() => index > 0 && setIndex(index - 1)}
         >
           ←
         </Text>
@@ -85,9 +84,7 @@ export default function HomeScreen() {
         <Text
           style={styles.button}
           testID="button-next-day"
-          onPress={() => {
-            if (index < weatherData.length - 1) setIndex(index + 1);
-          }}
+          onPress={() => index < 6 && setIndex(index + 1)}
         >
           →
         </Text>
@@ -111,11 +108,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     padding: 20,
     justifyContent: "space-between",
-
-    shadowColor: "#000",
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 8,
   },
 
   day: {
@@ -127,12 +119,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 18,
     fontWeight: "600",
-    letterSpacing: 1,
   },
 
   iconContainer: {
     alignItems: "center",
-    marginBottom: 20,
   },
 
   metrics: {
