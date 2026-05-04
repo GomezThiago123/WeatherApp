@@ -1,76 +1,68 @@
-EXPLICACION DE LA WEATHER APP
+RESUMEN FACIL DE LA WEATHER APP
 
-Resumen:
-Esta aplicacion muestra una pantalla de clima hecha con React Native y Expo.
-La pantalla esta inspirada en un prototipo visual minimalista: fondo blanco,
-ciudad centrada, icono grande del clima, metricas secundarias y temperaturas.
+Que se hizo:
+- Se creo una pantalla principal de clima en React Native con Expo.
+- La pantalla muestra una ciudad, un icono del clima, temperaturas y metricas.
+- Se agrego navegacion entre 3 dias: 1/3, 2/3 y 3/3.
+- Se agregaron testID para que la app pueda ser evaluada con tests.
+- Se configuraron tests con Jest y Testing Library.
+- Se actualizo el proyecto a Expo SDK 55 para que funcione en Expo Go actual.
 
-Pantalla principal:
-El archivo principal es:
+Archivo principal:
 app/(tabs)/index.tsx
 
-Esta pantalla muestra:
-- Nombre de la ciudad: VILLA LUGANO
-- Navegacion entre 3 dias: 1/3, 2/3 y 3/3
-- Icono del clima segun la condicion actual
+Ese archivo hace casi todo lo importante:
+- Llama a la API de clima.
+- Guarda los datos en estados con useState.
+- Cambia de dia cuando se presionan las flechas.
+- Decide que icono mostrar segun el codigo del clima.
+- Renderiza la pantalla visual.
+
+Datos reales:
+La app usa la API publica Open-Meteo.
+No necesita usuario, password ni API key.
+
+Se consultan datos de Villa Lugano / Buenos Aires con estas coordenadas:
+- latitude: -34.6751
+- longitude: -58.4621
+
+Datos que se muestran:
+- Temperatura actual
+- Temperatura minima
+- Temperatura maxima
 - Humedad
 - Presion atmosferica
 - Velocidad del viento
-- Temperatura minima
-- Temperatura actual o promedio
-- Temperatura maxima
+- Icono de condicion climatica
 
-Datos reales:
-La app usa datos reales de la API publica Open-Meteo.
-No necesita API key.
-
-La consulta se hace con fetch a una URL de Open-Meteo usando coordenadas de
-Villa Lugano / Buenos Aires:
-latitude=-34.6751
-longitude=-58.4621
-
-La API devuelve datos actuales y diarios, por ejemplo:
-- current.temperature_2m
-- current.relative_humidity_2m
-- current.surface_pressure
-- current.wind_speed_10m
-- current.weather_code
-- daily.temperature_2m_min
-- daily.temperature_2m_max
-- daily.temperature_2m_mean
-
-Navegacion por dias:
-La app guarda un indice en estado usando useState.
-Ese indice indica que dia se esta viendo:
-- 0 representa 1/3
-- 1 representa 2/3
-- 2 representa 3/3
-
-Cuando se presiona el boton izquierdo, baja el indice.
-Cuando se presiona el boton derecho, sube el indice.
-Los botones no permiten salir del rango de dias disponibles.
+Como funciona la navegacion:
+- La app tiene un estado llamado selectedDay.
+- selectedDay indica que dia se esta viendo.
+- Si selectedDay vale 0, se muestra 1/3.
+- Si selectedDay vale 1, se muestra 2/3.
+- Si selectedDay vale 2, se muestra 3/3.
+- La flecha izquierda resta 1.
+- La flecha derecha suma 1.
+- No deja pasar por debajo de 0 ni por arriba del ultimo dia.
 
 Estado de carga:
-Mientras se espera la respuesta de la API, se muestra:
+Cuando la app todavia esta esperando datos de internet, muestra:
 "Cargando clima..."
 
-Cuando la API responde, se guardan los datos en el estado forecast y se muestra
-la pantalla principal.
+Cuando llegan los datos, se muestra la pantalla del clima.
 
-Icono del clima:
-La funcion getWeatherIcon recibe el weatherCode de Open-Meteo.
-Segun el codigo, devuelve un icono de @expo/vector-icons:
-- weather-sunny
-- weather-cloudy
-- weather-fog
-- weather-rainy
-- weather-snowy
-- weather-pouring
-- weather-lightning
+Iconos:
+La app recibe un weatherCode de Open-Meteo.
+Segun ese numero, se elige un icono:
+- Sol
+- Nube
+- Niebla
+- Lluvia
+- Nieve
+- Tormenta
 
-TestID:
-La consigna pide testID explicitos para poder evaluar automaticamente la app.
-La pantalla incluye estos testID principales:
+TestID importantes:
+Estos nombres sirven para que los tests encuentren elementos en pantalla:
 - screen-weather
 - header-city
 - button-prev-day
@@ -85,43 +77,31 @@ La pantalla incluye estos testID principales:
 - temp-max
 
 Tests:
-Los tests estan en:
+Archivo:
 __tests__/weather-screen.test.tsx
 
-Los tests verifican:
-- Que existan los testID obligatorios
-- Que se renderice la ciudad
-- Que exista el icono climatico
-- Que haya 3 metricas secundarias
-- Que se muestren temperatura actual, minima y maxima
-- Que la navegacion al dia siguiente funcione
+Los tests comprueban:
+- Que la pantalla principal exista.
+- Que aparezca la ciudad.
+- Que haya icono de clima.
+- Que haya 3 metricas.
+- Que aparezcan temperatura actual, minima y maxima.
+- Que al tocar la flecha cambie de dia.
 
-Importante:
-En los tests no se llama a la API real. Se mockea fetch con datos falsos
-controlados para que los tests sean estables y no dependan de internet.
+Importante sobre los tests:
+Los tests no usan internet.
+Se simula la respuesta de la API con datos falsos para que siempre den igual.
 
-Comandos utiles:
-Instalar dependencias:
+Comandos para repasar:
 npm install
-
-Correr la app:
 npm start
-
-Correr en navegador:
 npm run web
-
-Correr tests:
 npm run tests
-
-Verificar TypeScript:
+npm run lint
 npx tsc --noEmit
 
-Verificar lint:
-npm run lint
-
-Archivos importantes:
-- app/(tabs)/index.tsx: pantalla principal y logica del clima
-- app/(tabs)/_layout.tsx: layout de navegacion sin header visible
-- __tests__/weather-screen.test.tsx: tests de cumplimiento
-- package.json: scripts, dependencias y configuracion de Jest
-- dependencias.txt: instrucciones para instalar y correr el proyecto
+Idea general para explicarlo:
+"Hice una pantalla de clima en Expo. La app consume datos reales de Open-Meteo,
+los guarda en estado, permite navegar entre tres dias y muestra temperatura,
+minima, maxima, humedad, presion y viento. Tambien agregue testID y tests para
+cumplir con la consigna de testing."
