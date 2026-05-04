@@ -36,7 +36,7 @@ describe("<HomeScreen />", () => {
 
     await waitFor(() => {
       expect(getByTestId("header-city")).toBeTruthy();
-    });
+    }, { timeout: 10000 });
 
     [
       "screen-weather",

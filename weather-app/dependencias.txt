@@ -1,62 +1,31 @@
-DEPENDENCIAS Y COMANDOS PARA CORRER EL PROYECTO
+COMO CORRER LA WEATHER APP
 
-Requisitos previos:
-- Node.js LTS instalado
-- npm instalado junto con Node.js
-- Expo Go instalado en el celular, si se quiere probar en dispositivo movil
+Requisitos:
+- Node.js LTS
+- npm
+- Expo Go compatible con SDK 55
 
 Instalar dependencias:
 npm install
 
-Correr la app:
+Iniciar el proyecto:
 npm start
 
-Correr en navegador web:
+Probar en Expo Go:
+npx expo start -c --lan
+
+Si el celular no conecta por Wi-Fi:
+npx expo start -c --tunnel
+
+Probar en navegador:
 npm run web
 
-Correr en Android con Expo:
-npm run android
-
-Correr en iOS con Expo:
-npm run ios
-
-Verificar errores de lint:
+Verificar el proyecto:
+npx tsc --noEmit
 npm run lint
-
-Correr tests:
 npm run tests
 
-Chequeo de TypeScript:
-npx tsc --noEmit
-
-Dependencias principales del proyecto:
-- expo
-- expo-router
-- react
-- react-dom
-- react-native
-- react-native-web
-- react-native-safe-area-context
-- react-native-screens
-- react-native-reanimated
-- @expo/vector-icons
-- @react-navigation/native
-- @react-navigation/elements
-- @react-navigation/bottom-tabs
-
-Dependencias de testing/desarrollo:
-- typescript
-- eslint
-- eslint-config-expo
-- jest
-- jest-expo
-- @types/jest
-- @types/react
-- @testing-library/react-native
-- react-test-renderer
-
 Notas:
-- El proyecto usa la API publica de Open-Meteo, no requiere API key.
-- Si VS Code muestra errores rojos pero estos comandos pasan, reiniciar el servidor de TypeScript:
-  Ctrl + Shift + P -> TypeScript: Restart TS Server
-- Para entregar codigo fuente, no incluir node_modules.
+- La app usa datos reales de Open-Meteo.
+- No necesita API key.
+- No subir node_modules al repositorio.
