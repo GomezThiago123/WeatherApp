@@ -1,3 +1,4 @@
+import * as Location from "expo-location";
 import { useEffect, useMemo, useState } from "react";
 import {
   ActivityIndicator,
@@ -65,16 +66,23 @@ export default function HomeScreen() {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
-        const url =
-          "https://api.open-meteo.com/v1/forecast?latitude=-34.6751&longitude=-58.4621&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,temperature_2m_mean,surface_pressure_mean,wind_speed_10m_mean,weather_code&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&timezone=auto&past_days=1&forecast_days=2&wind_speed_unit=ms";
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") return;
+
+        const { coords } = await Location.getCurrentPositionAsync({});
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${coords.latitude}&longitude=${coords.longitude}&daily=temperature_2m_max,temperature_2m_min,relative_humidity_2m_mean,temperature_2m_mean,surface_pressure_mean,wind_speed_10m_mean,weather_code&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,weather_code&timezone=auto&past_days=1&forecast_days=2&wind_speed_unit=ms`;
         const response = await fetch(url);
         const data = await response.json();
 
+        const now = new Date();
+        const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
         const days = data.daily.time.map((rawDate: string, index: number) => {
-          const isToday = index === 1;
+          const isToday = rawDate === todayStr;
+          const [, month, day] = rawDate.split("-");
 
           return {
-            date: `${index + 1}/3`,
+            date: `${day}/${month}`,
             min: Math.round(data.daily.temperature_2m_min[index]),
             max: Math.round(data.daily.temperature_2m_max[index]),
             current: isToday
@@ -96,7 +104,8 @@ export default function HomeScreen() {
         });
 
         setForecast(days);
-        setSelectedDay(1);
+        const todayIndex = data.daily.time.findIndex((d: string) => d === todayStr);
+        setSelectedDay(todayIndex !== -1 ? todayIndex : 1);
       } catch (error) {
         console.error("Error cargando clima:", error);
       } finally {

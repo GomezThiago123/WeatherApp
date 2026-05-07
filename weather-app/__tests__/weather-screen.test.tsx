@@ -11,7 +11,7 @@ const mockWeatherResponse = {
     weather_code: 2,
   },
   daily: {
-    time: ["2026-05-02", "2026-05-03", "2026-05-04"],
+    time: ["2026-05-06", "2026-05-07", "2026-05-08"],
     temperature_2m_min: [8, 4, 9],
     temperature_2m_max: [17, 18, 19],
     temperature_2m_mean: [12, 14, 15],
