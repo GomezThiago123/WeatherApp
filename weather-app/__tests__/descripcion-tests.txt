@@ -1,0 +1,35 @@
+Tests del hook useWeather
+========================
+
+1. empieza en estado de carga
+   Verifica que isLoading sea true antes de que llegue la respuesta de la API.
+
+2. carga los días correctamente desde la API
+   Verifica que forecast tenga 3 días después de que la API responde.
+
+3. selecciona hoy como día inicial
+   Verifica que selectedDay apunte al día de hoy y que isToday sea true al cargar.
+
+4. el día actual usa los datos de current de la API
+   Verifica que temperatura, humedad, presión y viento de hoy vengan del campo "current" de la API.
+
+5. los días que no son hoy usan datos de daily
+   Verifica que al navegar a ayer los datos vengan del campo "daily" en lugar de "current".
+
+6. navegar al día siguiente incrementa selectedDay
+   Verifica que goToNextDay pase de hoy (índice 1) a mañana (índice 2) y que isToday sea false.
+
+7. navegar al día anterior decrementa selectedDay
+   Verifica que goToPrevDay pase de hoy (índice 1) a ayer (índice 0).
+
+8. no se puede ir antes del primer día
+   Verifica que llamar goToPrevDay dos veces desde ayer no baje de índice 0.
+
+9. no se puede ir después del último día
+   Verifica que llamar goToNextDay dos veces desde hoy no suba de índice 2.
+
+10. previousDate y nextDate corresponden a los días adyacentes
+    Verifica que previousDate sea la fecha de ayer y nextDate la de mañana en formato dd/mm.
+
+11. sin permiso de ubicación termina la carga sin pedir datos
+    Verifica que si el usuario niega el permiso de ubicación, no se llama a fetch y forecast queda vacío.
